@@ -524,7 +524,8 @@ Falcon Query Language expression to find scheduled scans for removal
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconScheduledScan
 #>
-  [CmdletBinding(DefaultParameterSetName='/ods/entities/scheduled-scans/v1:delete',SupportsShouldProcess)]
+  [CmdletBinding(DefaultParameterSetName='/ods/entities/scheduled-scans/v1:delete',SupportsShouldProcess,
+    ConfirmImpact='High')]
   param(
     [Parameter(ParameterSetName='/ods/entities/scheduled-scans/v1:delete',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline)]

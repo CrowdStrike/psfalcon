@@ -529,7 +529,8 @@ Indicator identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconIoc
 #>
-  [CmdletBinding(DefaultParameterSetName='/iocs/entities/indicators/v1:delete',SupportsShouldProcess)]
+  [CmdletBinding(DefaultParameterSetName='/iocs/entities/indicators/v1:delete',SupportsShouldProcess,
+    ConfirmImpact='High')]
   param(
     [Parameter(ParameterSetName='Filter',Mandatory)]
     [ValidateScript({Test-FqlStatement $_})]

@@ -1406,7 +1406,7 @@ FileVantage scheduled exclusion identifier
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconFileVantageExclusion
 #>
   [CmdletBinding(DefaultParameterSetName='/filevantage/entities/policy-scheduled-exclusions/v1:delete',
-    SupportsShouldProcess)]
+    SupportsShouldProcess,ConfirmImpact='High')]
   param(
     [Parameter(ParameterSetName='/filevantage/entities/policy-scheduled-exclusions/v1:delete',Mandatory,
       Position=1)]
@@ -1449,7 +1449,7 @@ Host group identifier
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconFileVantageHostGroup
 #>
   [CmdletBinding(DefaultParameterSetName='/filevantage/entities/policies-host-groups/v1:patch',
-    SupportsShouldProcess)]
+    SupportsShouldProcess,ConfirmImpact='High')]
   param(
     [Parameter(ParameterSetName='/filevantage/entities/policies-host-groups/v1:patch',Mandatory,Position=1)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
@@ -1489,7 +1489,8 @@ FileVantage policy identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconFileVantagePolicy
 #>
-  [CmdletBinding(DefaultParameterSetName='/filevantage/entities/policies/v1:delete',SupportsShouldProcess)]
+  [CmdletBinding(DefaultParameterSetName='/filevantage/entities/policies/v1:delete',SupportsShouldProcess,
+    ConfirmImpact='High')]
   param(
     [Parameter(ParameterSetName='/filevantage/entities/policies/v1:delete',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
@@ -1527,7 +1528,7 @@ FileVantage rule identifier
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconFileVantageRule
 #>
   [CmdletBinding(DefaultParameterSetName='/filevantage/entities/rule-groups-rules/v1:delete',
-    SupportsShouldProcess)]
+    SupportsShouldProcess,ConfirmImpact='High')]
   param(
     [Parameter(ParameterSetName='/filevantage/entities/rule-groups-rules/v1:delete',Mandatory,Position=1)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
@@ -1568,7 +1569,8 @@ FileVantage policy identifier, used when unassigning rule groups from a policy
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconFileVantageRuleGroup
 #>
-  [CmdletBinding(DefaultParameterSetName='/filevantage/entities/rule-groups/v1:delete',SupportsShouldProcess)]
+  [CmdletBinding(DefaultParameterSetName='/filevantage/entities/rule-groups/v1:delete',SupportsShouldProcess,
+    ConfirmImpact='High')]
   param(
     [Parameter(ParameterSetName='/filevantage/entities/policies-rule-groups/v1:patch',Mandatory,Position=1)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]

@@ -103,7 +103,8 @@ Scan identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconQuickScan
 #>
-  [CmdletBinding(DefaultParameterSetName='/quickscanpro/entities/scans/v1:delete',SupportsShouldProcess)]
+  [CmdletBinding(DefaultParameterSetName='/quickscanpro/entities/scans/v1:delete',SupportsShouldProcess,
+    ConfirmImpact='High')]
   param(
     [Parameter(ParameterSetName='/quickscanpro/entities/scans/v1:delete',Mandatory,ValueFromPipelineByPropertyName,
       ValueFromPipeline,Position=1)]
@@ -138,7 +139,8 @@ Sample identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconQuickScanFile
 #>
-  [CmdletBinding(DefaultParameterSetName='/quickscanpro/entities/files/v1:delete',SupportsShouldProcess)]
+  [CmdletBinding(DefaultParameterSetName='/quickscanpro/entities/files/v1:delete',SupportsShouldProcess,
+    ConfirmImpact='High')]
   param(
     [Parameter(ParameterSetName='/quickscanpro/entities/files/v1:delete',Mandatory,ValueFromPipelineByPropertyName,
       ValueFromPipeline,Position=1)]

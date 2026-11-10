@@ -703,7 +703,8 @@ Host identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconGroupingTag
 #>
-  [CmdletBinding(DefaultParameterSetName='/devices/entities/devices/tags/v1:patch',SupportsShouldProcess)]
+  [CmdletBinding(DefaultParameterSetName='/devices/entities/devices/tags/v1:patch',SupportsShouldProcess,
+    ConfirmImpact='High')]
   param(
     [Parameter(ParameterSetName='/devices/entities/devices/tags/v1:patch',Mandatory,Position=1)]
     [ValidatePattern('^FalconGroupingTags/.+$')]
@@ -748,7 +749,8 @@ Host group identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconHostGroup
 #>
-  [CmdletBinding(DefaultParameterSetName='/devices/entities/host-groups/v1:delete',SupportsShouldProcess)]
+  [CmdletBinding(DefaultParameterSetName='/devices/entities/host-groups/v1:delete',SupportsShouldProcess,
+    ConfirmImpact='High')]
   param(
     [Parameter(ParameterSetName='/devices/entities/host-groups/v1:delete',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]

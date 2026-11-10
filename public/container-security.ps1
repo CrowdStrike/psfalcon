@@ -1313,7 +1313,7 @@ Container image identifier
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconContainerImage
 #>
   [CmdletBinding(DefaultParameterSetName='/container-security/entities/base-images/v1:delete',
-    SupportsShouldProcess)]
+    SupportsShouldProcess,ConfirmImpact='High')]
   param(
     [Parameter(ParameterSetName='/container-security/entities/base-images/v1:delete',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
@@ -1348,7 +1348,7 @@ Image assessment policy identifier
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconContainerPolicy
 #>
   [CmdletBinding(DefaultParameterSetName='/container-security/entities/image-assessment-policies/v1:delete',
-    SupportsShouldProcess)]
+    SupportsShouldProcess,ConfirmImpact='High')]
   param(
     [Parameter(ParameterSetName='/container-security/entities/image-assessment-policies/v1:delete',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
@@ -1376,7 +1376,7 @@ Image group identifier
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconContainerPolicyGroup
 #>
   [CmdletBinding(DefaultParameterSetName='/container-security/entities/image-assessment-policy-groups/v1:delete',
-    SupportsShouldProcess)]
+    SupportsShouldProcess,ConfirmImpact='High')]
   param(
     [Parameter(ParameterSetName='/container-security/entities/image-assessment-policy-groups/v1:delete',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
@@ -1404,7 +1404,7 @@ Container registry identifier
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconContainerRegistry
 #>
   [CmdletBinding(DefaultParameterSetName='/container-security/entities/registries/v1:delete',
-    SupportsShouldProcess)]
+    SupportsShouldProcess,ConfirmImpact='High')]
   param(
     [Parameter(ParameterSetName='/container-security/entities/registries/v1:delete',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline)]

@@ -930,7 +930,8 @@ Profile group identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconProfileGroup
 #>
-  [CmdletBinding(DefaultParameterSetName='/user-management/entities/groups/v1:delete',SupportsShouldProcess)]
+  [CmdletBinding(DefaultParameterSetName='/user-management/entities/groups/v1:delete',SupportsShouldProcess,
+    ConfirmImpact='High')]
   param(
     [Parameter(ParameterSetName='/user-management/entities/groups/v1:delete',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
@@ -968,7 +969,7 @@ Profile group identifier
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconProfileGroupMember
 #>
   [CmdletBinding(DefaultParameterSetName='/user-management/entities/group-users-actions/v1:post',
-    SupportsShouldProcess)]
+    SupportsShouldProcess,ConfirmImpact='High')]
   param(
     [Parameter(ParameterSetName='/user-management/entities/group-users-actions/v1:post',Mandatory,
       ValueFromPipelineByPropertyName,Position=1)]
@@ -1025,7 +1026,7 @@ User role
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconRole
 #>
   [CmdletBinding(DefaultParameterSetName='/user-management/entities/user-role-actions/v1:post',
-    SupportsShouldProcess)]
+    SupportsShouldProcess,ConfirmImpact='High')]
   param(
     [Parameter(ParameterSetName='/user-management/entities/user-role-actions/v1:post',Mandatory,
       ValueFromPipelineByPropertyName,Position=1)]
@@ -1072,7 +1073,8 @@ User identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconUser
 #>
-  [CmdletBinding(DefaultParameterSetName='/user-management/entities/users/v1:delete',SupportsShouldProcess)]
+  [CmdletBinding(DefaultParameterSetName='/user-management/entities/users/v1:delete',SupportsShouldProcess,
+    ConfirmImpact='High')]
   param(
     [Parameter(ParameterSetName='/user-management/entities/users/v1:delete',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]

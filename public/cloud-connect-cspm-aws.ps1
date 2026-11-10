@@ -358,7 +358,7 @@ AWS organization identifier
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconCloudAwsAccount
 #>
   [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:delete',
-    SupportsShouldProcess)]
+    SupportsShouldProcess,ConfirmImpact='High')]
   [Alias('Remove-FalconHorizonAwsAccount')]
   param(
     [Parameter(ParameterSetName='/cloud-connect-cspm-aws/entities/account/v1:delete',Mandatory,

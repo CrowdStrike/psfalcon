@@ -612,7 +612,8 @@ Rule group identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconIoaGroup
 #>
-  [CmdletBinding(DefaultParameterSetName='/ioarules/entities/rule-groups/v1:delete',SupportsShouldProcess)]
+  [CmdletBinding(DefaultParameterSetName='/ioarules/entities/rule-groups/v1:delete',SupportsShouldProcess,
+    ConfirmImpact='High')]
   param(
     [Parameter(ParameterSetName='/ioarules/entities/rule-groups/v1:delete',Position=1)]
     [string]$Comment,
@@ -653,7 +654,8 @@ Rule identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconIoaRule
 #>
-  [CmdletBinding(DefaultParameterSetName='/ioarules/entities/rules/v1:delete',SupportsShouldProcess)]
+  [CmdletBinding(DefaultParameterSetName='/ioarules/entities/rules/v1:delete',SupportsShouldProcess,
+    ConfirmImpact='High')]
   param(
     [Parameter(ParameterSetName='/ioarules/entities/rules/v1:delete',Position=1)]
     [string]$Comment,

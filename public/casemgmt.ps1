@@ -667,7 +667,8 @@ Notification group identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconNgsCaseNotificationGroup
 #>
-  [CmdletBinding(DefaultParameterSetName='/casemgmt/entities/notification-groups/v2:delete',SupportsShouldProcess)]
+  [CmdletBinding(DefaultParameterSetName='/casemgmt/entities/notification-groups/v2:delete',SupportsShouldProcess,
+    ConfirmImpact='High')]
   param(
     [Parameter(ParameterSetName='/casemgmt/entities/notification-groups/v2:delete',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
@@ -702,7 +703,8 @@ SLA identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconNgsCaseSla
 #>
-  [CmdletBinding(DefaultParameterSetName='/casemgmt/entities/slas/v1:delete',SupportsShouldProcess)]
+  [CmdletBinding(DefaultParameterSetName='/casemgmt/entities/slas/v1:delete',SupportsShouldProcess,
+    ConfirmImpact='High')]
   param(
     [Parameter(ParameterSetName='/casemgmt/entities/slas/v1:delete',Mandatory,ValueFromPipelineByPropertyName,
       ValueFromPipeline,Position=1)]
@@ -737,7 +739,8 @@ Case template identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconNgsCaseTemplate
 #>
-  [CmdletBinding(DefaultParameterSetName='/casemgmt/entities/templates/v1:delete',SupportsShouldProcess)]
+  [CmdletBinding(DefaultParameterSetName='/casemgmt/entities/templates/v1:delete',SupportsShouldProcess,
+    ConfirmImpact='High')]
   param(
     [Parameter(ParameterSetName='/casemgmt/entities/templates/v1:delete',Mandatory,ValueFromPipelineByPropertyName,
       ValueFromPipeline,Position=1)]

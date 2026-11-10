@@ -652,7 +652,7 @@ AWS account identifier
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconContainerAwsAccount
 #>
   [CmdletBinding(DefaultParameterSetName='/kubernetes-protection/entities/accounts/aws/v1:delete',
-    SupportsShouldProcess)]
+    SupportsShouldProcess,ConfirmImpact='High')]
   param(
     [Parameter(ParameterSetName='/kubernetes-protection/entities/accounts/aws/v1:delete',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
@@ -688,7 +688,7 @@ Azure subscription identifier
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconContainerAzureAccount
 #>
   [CmdletBinding(DefaultParameterSetName='/kubernetes-protection/entities/accounts/azure/v1:delete',
-    SupportsShouldProcess)]
+    SupportsShouldProcess,ConfirmImpact='High')]
   param(
     [Parameter(ParameterSetName='/kubernetes-protection/entities/accounts/azure/v1:delete',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]

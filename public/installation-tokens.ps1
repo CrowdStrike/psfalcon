@@ -278,7 +278,8 @@ Installation token identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconInstallToken
 #>
-  [CmdletBinding(DefaultParameterSetName='/installation-tokens/entities/tokens/v1:delete',SupportsShouldProcess)]
+  [CmdletBinding(DefaultParameterSetName='/installation-tokens/entities/tokens/v1:delete',SupportsShouldProcess,
+    ConfirmImpact='High')]
   param(
     [Parameter(ParameterSetName='/installation-tokens/entities/tokens/v1:delete',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]

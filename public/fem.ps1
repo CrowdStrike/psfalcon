@@ -189,7 +189,8 @@ Audit log comment
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconAsset
 #>
-  [CmdletBinding(DefaultParameterSetName='/fem/entities/external-assets/v1:delete',SupportsShouldProcess)]
+  [CmdletBinding(DefaultParameterSetName='/fem/entities/external-assets/v1:delete',SupportsShouldProcess,
+    ConfirmImpact='High')]
   param(
     [Parameter(ParameterSetName='/fem/entities/external-assets/v1:delete',Mandatory,Position=1)]
     [Alias('description')]

@@ -371,7 +371,8 @@ One or more tag values
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconNgsCaseTag
 #>
-  [CmdletBinding(DefaultParameterSetName='/cases/entities/case-tags/v1:delete',SupportsShouldProcess)]
+  [CmdletBinding(DefaultParameterSetName='/cases/entities/case-tags/v1:delete',SupportsShouldProcess,
+    ConfirmImpact='High')]
   param(
     [Parameter(ParameterSetName='/cases/entities/case-tags/v1:delete',Mandatory,ValueFromPipelineByPropertyName,
       Position=1)]

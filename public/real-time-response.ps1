@@ -1172,7 +1172,7 @@ Cloud request identifier
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconCommand
 #>
   [CmdletBinding(DefaultParameterSetName='/real-time-response/entities/queued-sessions/command/v1:delete',
-    SupportsShouldProcess)]
+    SupportsShouldProcess,ConfirmImpact='High')]
   param(
     [Parameter(ParameterSetName='/real-time-response/entities/queued-sessions/command/v1:delete',Mandatory,
       ValueFromPipelineByPropertyName,Position=1)]
@@ -1211,7 +1211,8 @@ Real-time Response 'get' file identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconGetFile
 #>
-  [CmdletBinding(DefaultParameterSetName='/real-time-response/entities/file/v2:delete',SupportsShouldProcess)]
+  [CmdletBinding(DefaultParameterSetName='/real-time-response/entities/file/v2:delete',SupportsShouldProcess,
+    ConfirmImpact='High')]
   param(
     [Parameter(ParameterSetName='/real-time-response/entities/file/v2:delete',Mandatory,
       ValueFromPipelineByPropertyName,Position=1)]
@@ -1245,7 +1246,7 @@ Real-time Response 'put' file identifier
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconPutFile
 #>
   [CmdletBinding(DefaultParameterSetName='/real-time-response/entities/put-files/v1:delete',
-    SupportsShouldProcess)]
+    SupportsShouldProcess,ConfirmImpact='High')]
   param(
     [Parameter(ParameterSetName='/real-time-response/entities/put-files/v1:delete',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
@@ -1273,7 +1274,8 @@ Script identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconScript
 #>
-  [CmdletBinding(DefaultParameterSetName='/real-time-response/entities/scripts/v1:delete',SupportsShouldProcess)]
+  [CmdletBinding(DefaultParameterSetName='/real-time-response/entities/scripts/v1:delete',SupportsShouldProcess,
+    ConfirmImpact='High')]
   param(
     [Parameter(ParameterSetName='/real-time-response/entities/scripts/v1:delete',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
@@ -1302,7 +1304,7 @@ Session identifier
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconSession
 #>
   [CmdletBinding(DefaultParameterSetName='/real-time-response/entities/sessions/v1:delete',
-    SupportsShouldProcess)]
+    SupportsShouldProcess,ConfirmImpact='High')]
   param(
     [Parameter(ParameterSetName='/real-time-response/entities/sessions/v1:delete',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]

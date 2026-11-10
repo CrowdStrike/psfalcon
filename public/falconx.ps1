@@ -430,7 +430,8 @@ Report identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconReport
 #>
-  [CmdletBinding(DefaultParameterSetName='/falconx/entities/reports/v1:delete',SupportsShouldProcess)]
+  [CmdletBinding(DefaultParameterSetName='/falconx/entities/reports/v1:delete',SupportsShouldProcess,
+    ConfirmImpact='High')]
   param(
     [Parameter(ParameterSetName='/falconx/entities/reports/v1:delete',Mandatory,ValueFromPipelineByPropertyName,
       ValueFromPipeline,Position=1)]

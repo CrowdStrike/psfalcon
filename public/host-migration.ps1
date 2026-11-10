@@ -386,7 +386,7 @@ Host migration job identifier
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconMigration
 #>
   [CmdletBinding(DefaultParameterSetName='/host-migration/entities/migrations-actions/v1:post',
-    SupportsShouldProcess)]
+    SupportsShouldProcess,ConfirmImpact='High')]
   param(
     [Parameter(ParameterSetName='/host-migration/entities/migrations-actions/v1:post',
       ValueFromPipelineByPropertyName,ValueFromPipeline,Mandatory,Position=1)]

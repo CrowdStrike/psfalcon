@@ -377,7 +377,7 @@ Exclusion identifier
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconCertificateExclusion
 #>
   [CmdletBinding(DefaultParameterSetName='/exclusions/entities/cert-based-exclusions/v1:delete',
-    SupportsShouldProcess)]
+    SupportsShouldProcess,ConfirmImpact='High')]
   param(
     [Parameter(ParameterSetName='/exclusions/entities/cert-based-exclusions/v1:delete',Position=1)]
     [string]$Comment,

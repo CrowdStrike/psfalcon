@@ -1615,7 +1615,7 @@ Host group identifier
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconItHostGroup
 #>
   [CmdletBinding(DefaultParameterSetName='/it-automation/entities/policies-host-groups/v1:patch',
-    SupportsShouldProcess)]
+    SupportsShouldProcess,ConfirmImpact='High')]
   param(
     [Parameter(ParameterSetName='/it-automation/entities/policies-host-groups/v1:patch',Mandatory,Position=1)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
@@ -1655,7 +1655,8 @@ Policy identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconItPolicy
 #>
-  [CmdletBinding(DefaultParameterSetName='/it-automation/entities/policies/v1:delete',SupportsShouldProcess)]
+  [CmdletBinding(DefaultParameterSetName='/it-automation/entities/policies/v1:delete',SupportsShouldProcess,
+    ConfirmImpact='High')]
   param(
     [Parameter(ParameterSetName='/it-automation/entities/policies/v1:delete',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
@@ -1691,7 +1692,7 @@ Scheduled task identifier
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconItScheduledTask
 #>
   [CmdletBinding(DefaultParameterSetName='/it-automation/entities/scheduled-tasks/v1:delete',
-    SupportsShouldProcess)]
+    SupportsShouldProcess,ConfirmImpact='High')]
   param(
     [Parameter(ParameterSetName='/it-automation/entities/scheduled-tasks/v1:delete',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
@@ -1726,7 +1727,8 @@ Task identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconItTask
 #>
-  [CmdletBinding(DefaultParameterSetName='/it-automation/entities/tasks/v1:delete',SupportsShouldProcess)]
+  [CmdletBinding(DefaultParameterSetName='/it-automation/entities/tasks/v1:delete',SupportsShouldProcess,
+    ConfirmImpact='High')]
   param(
     [Parameter(ParameterSetName='/it-automation/entities/tasks/v1:delete',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
@@ -1761,7 +1763,8 @@ Task group identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconItTaskGroup
 #>
-  [CmdletBinding(DefaultParameterSetName='/it-automation/entities/task-groups/v1:delete',SupportsShouldProcess)]
+  [CmdletBinding(DefaultParameterSetName='/it-automation/entities/task-groups/v1:delete',SupportsShouldProcess,
+    ConfirmImpact='High')]
   param(
     [Parameter(ParameterSetName='/it-automation/entities/task-groups/v1:delete',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
@@ -1796,7 +1799,8 @@ User group identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconItUserGroup
 #>
-  [CmdletBinding(DefaultParameterSetName='/it-automation/entities/it-user-groups/v1:delete',SupportsShouldProcess)]
+  [CmdletBinding(DefaultParameterSetName='/it-automation/entities/it-user-groups/v1:delete',SupportsShouldProcess,
+    ConfirmImpact='High')]
   param(
     [Parameter(ParameterSetName='/it-automation/entities/it-user-groups/v1:delete',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]

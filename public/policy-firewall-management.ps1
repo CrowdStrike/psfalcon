@@ -327,7 +327,8 @@ Policy identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconFirewallPolicy
 #>
-  [CmdletBinding(DefaultParameterSetName='/policy/entities/firewall/v1:delete',SupportsShouldProcess)]
+  [CmdletBinding(DefaultParameterSetName='/policy/entities/firewall/v1:delete',SupportsShouldProcess,
+    ConfirmImpact='High')]
   param(
     [Parameter(ParameterSetName='/policy/entities/firewall/v1:delete',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]

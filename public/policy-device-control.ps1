@@ -494,7 +494,8 @@ Policy identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconDeviceControlPolicy
 #>
-  [CmdletBinding(DefaultParameterSetName='/policy/entities/device-control/v1:delete',SupportsShouldProcess)]
+  [CmdletBinding(DefaultParameterSetName='/policy/entities/device-control/v1:delete',SupportsShouldProcess,
+    ConfirmImpact='High')]
   param(
     [Parameter(ParameterSetName='/policy/entities/device-control/v1:delete',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]

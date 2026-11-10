@@ -470,7 +470,8 @@ Data connection identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconNgsDataConnection
 #>
-  [CmdletBinding(DefaultParameterSetName='/ngsiem/entities/connections/v1:delete',SupportsShouldProcess)]
+  [CmdletBinding(DefaultParameterSetName='/ngsiem/entities/connections/v1:delete',SupportsShouldProcess,
+    ConfirmImpact='High')]
   param(
     [Parameter(ParameterSetName='/ngsiem/entities/connections/v1:delete',Mandatory,ValueFromPipelineByPropertyName,
       ValueFromPipeline,Position=1)]
@@ -500,7 +501,8 @@ Data connector identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconNgsDataConnectorConfig
 #>
-  [CmdletBinding(DefaultParameterSetName='/ngsiem/entities/connectors/configs/v1:delete',SupportsShouldProcess)]
+  [CmdletBinding(DefaultParameterSetName='/ngsiem/entities/connectors/configs/v1:delete',SupportsShouldProcess,
+    ConfirmImpact='High')]
   param(
     [Parameter(ParameterSetName='/ngsiem/entities/connectors/configs/v1:delete',Mandatory,
       ValueFromPipelineByPropertyName,Position=1)]

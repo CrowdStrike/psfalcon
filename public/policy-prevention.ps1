@@ -358,7 +358,8 @@ Policy identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconPreventionPolicy
 #>
-  [CmdletBinding(DefaultParameterSetName='/policy/entities/prevention/v1:delete',SupportsShouldProcess)]
+  [CmdletBinding(DefaultParameterSetName='/policy/entities/prevention/v1:delete',SupportsShouldProcess,
+    ConfirmImpact='High')]
   param(
     [Parameter(ParameterSetName='/policy/entities/prevention/v1:delete',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]

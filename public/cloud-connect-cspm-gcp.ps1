@@ -366,7 +366,7 @@ GCP resource identifier
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconCloudGcpAccount
 #>
   [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-gcp/entities/account/v1:delete',
-    SupportsShouldProcess)]
+    SupportsShouldProcess,ConfirmImpact='High')]
   param(
     [Parameter(ParameterSetName='/cloud-connect-cspm-gcp/entities/account/v1:delete',
       ValueFromPipelineByPropertyName,ValueFromPipeline,Mandatory,Position=1)]

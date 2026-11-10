@@ -662,7 +662,8 @@ Repository or view
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconNgsDashboard
 #>
-  [CmdletBinding(DefaultParameterSetName='/ngsiem-content/entities/dashboards/v1:delete',SupportsShouldProcess)]
+  [CmdletBinding(DefaultParameterSetName='/ngsiem-content/entities/dashboards/v1:delete',SupportsShouldProcess,
+    ConfirmImpact='High')]
   param(
     [Parameter(ParameterSetName='/ngsiem-content/entities/dashboards/v1:delete',Mandatory,
       ValueFromPipelineByPropertyName,Position=1)]
@@ -696,7 +697,8 @@ Repository or view
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconNgsLookupFile
 #>
-  [CmdletBinding(DefaultParameterSetName='/ngsiem-content/entities/lookupfiles/v1:delete',SupportsShouldProcess)]
+  [CmdletBinding(DefaultParameterSetName='/ngsiem-content/entities/lookupfiles/v1:delete',SupportsShouldProcess,
+    ConfirmImpact='High')]
   param(
     [Parameter(ParameterSetName='/ngsiem-content/entities/lookupfiles/v1:delete',Mandatory,
       ValueFromPipelineByPropertyName,Position=1)]
@@ -729,7 +731,8 @@ Repository
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconNgsParser
 #>
-  [CmdletBinding(DefaultParameterSetName='/ngsiem-content/entities/parsers/v1:delete',SupportsShouldProcess)]
+  [CmdletBinding(DefaultParameterSetName='/ngsiem-content/entities/parsers/v1:delete',SupportsShouldProcess,
+    ConfirmImpact='High')]
   param(
     [Parameter(ParameterSetName='/ngsiem-content/entities/parsers/v1:delete',Mandatory,
       ValueFromPipelineByPropertyName,Position=1)]
@@ -762,7 +765,8 @@ Repository or view
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconNgsSavedQuery
 #>
-  [CmdletBinding(DefaultParameterSetName='/ngsiem-content/entities/savedqueries/v1:delete',SupportsShouldProcess)]
+  [CmdletBinding(DefaultParameterSetName='/ngsiem-content/entities/savedqueries/v1:delete',SupportsShouldProcess,
+    ConfirmImpact='High')]
   param(
     [Parameter(ParameterSetName='/ngsiem-content/entities/savedqueries/v1:delete',Mandatory,
       ValueFromPipelineByPropertyName,Position=1)]

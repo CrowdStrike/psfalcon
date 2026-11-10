@@ -100,7 +100,8 @@ Sha256 hash value
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconSample
 #>
-  [CmdletBinding(DefaultParameterSetName='/samples/entities/samples/v3:delete',SupportsShouldProcess)]
+  [CmdletBinding(DefaultParameterSetName='/samples/entities/samples/v3:delete',SupportsShouldProcess,
+    ConfirmImpact='High')]
   param(
     [Parameter(ParameterSetName='/samples/entities/samples/v3:delete',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]

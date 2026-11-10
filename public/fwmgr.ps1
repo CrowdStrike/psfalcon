@@ -1315,7 +1315,8 @@ Location identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconFirewallLocation
 #>
-  [CmdletBinding(DefaultParameterSetName='/fwmgr/entities/network-locations/v1:delete',SupportsShouldProcess)]
+  [CmdletBinding(DefaultParameterSetName='/fwmgr/entities/network-locations/v1:delete',SupportsShouldProcess,
+    ConfirmImpact='High')]
   param(
     [Parameter(ParameterSetName='/fwmgr/entities/network-locations/v1:delete',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]

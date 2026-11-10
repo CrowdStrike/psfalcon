@@ -234,7 +234,7 @@ Add command request to the offline queue
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconSensorTag
 #>
-  [CmdletBinding(SupportsShouldProcess)]
+  [CmdletBinding(SupportsShouldProcess,ConfirmImpact='High')]
   [OutputType([PSCustomObject])]
   param(
     [Parameter(Position=1)]
@@ -331,7 +331,7 @@ Host identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Uninstall-FalconSensor
 #>
-  [CmdletBinding(SupportsShouldProcess)]
+  [CmdletBinding(SupportsShouldProcess,ConfirmImpact='High')]
   param(
     [Parameter(Position=1)]
     [boolean]$QueueOffline,

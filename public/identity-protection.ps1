@@ -308,7 +308,7 @@ Policy rule identifier
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconIdentityRule
 #>
   [CmdletBinding(DefaultParameterSetName='/identity-protection/entities/policy-rules/v1:delete',
-    SupportsShouldProcess)]
+    SupportsShouldProcess,ConfirmImpact='High')]
   param(
     [Parameter(ParameterSetName='/identity-protection/entities/policy-rules/v1:delete',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]

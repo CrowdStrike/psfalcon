@@ -720,7 +720,8 @@ CID group
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconCidGroup
 #>
-  [CmdletBinding(DefaultParameterSetName='/mssp/entities/cid-groups/v1:delete',SupportsShouldProcess)]
+  [CmdletBinding(DefaultParameterSetName='/mssp/entities/cid-groups/v1:delete',SupportsShouldProcess,
+    ConfirmImpact='High')]
   param(
     [Parameter(ParameterSetName='/mssp/entities/cid-groups/v1:delete',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
@@ -757,7 +758,8 @@ Customer identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconCidGroupMember
 #>
-  [CmdletBinding(DefaultParameterSetName='/mssp/entities/cid-group-members/v2:delete',SupportsShouldProcess)]
+  [CmdletBinding(DefaultParameterSetName='/mssp/entities/cid-group-members/v2:delete',SupportsShouldProcess,
+    ConfirmImpact='High')]
   param(
     [Parameter(ParameterSetName='/mssp/entities/cid-group-members/v2:delete',Mandatory,
       ValueFromPipelineByPropertyName,Position=1)]
@@ -808,7 +810,8 @@ Role identifier, or leave blank to remove user group/CID group association
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconGroupRole
 #>
-  [CmdletBinding(DefaultParameterSetName='/mssp/entities/mssp-roles/v1:delete',SupportsShouldProcess)]
+  [CmdletBinding(DefaultParameterSetName='/mssp/entities/mssp-roles/v1:delete',SupportsShouldProcess,
+    ConfirmImpact='High')]
   param(
     [Parameter(ParameterSetName='/mssp/entities/mssp-roles/v1:delete',Mandatory,
       ValueFromPipelineByPropertyName,Position=1)]
@@ -858,7 +861,8 @@ User group identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconUserGroup
 #>
-  [CmdletBinding(DefaultParameterSetName='/mssp/entities/user-groups/v1:delete',SupportsShouldProcess)]
+  [CmdletBinding(DefaultParameterSetName='/mssp/entities/user-groups/v1:delete',SupportsShouldProcess,
+    ConfirmImpact='High')]
   param(
     [Parameter(ParameterSetName='/mssp/entities/user-groups/v1:delete',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
@@ -895,7 +899,8 @@ User identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconUserGroupMember
 #>
-  [CmdletBinding(DefaultParameterSetName='/mssp/entities/user-group-members/v1:delete',SupportsShouldProcess)]
+  [CmdletBinding(DefaultParameterSetName='/mssp/entities/user-group-members/v1:delete',SupportsShouldProcess,
+    ConfirmImpact='High')]
   param(
     [Parameter(ParameterSetName='/mssp/entities/user-group-members/v1:delete',Mandatory,Position=1)]
     [ValidatePattern('^[a-fA-F0-9]{32}$')]

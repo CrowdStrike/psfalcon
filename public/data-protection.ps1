@@ -1436,7 +1436,7 @@ Enterprise account identifier
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconDpeAccount
 #>
   [CmdletBinding(DefaultParameterSetName='/data-protection/entities/enterprise-accounts/v1:delete',
-    SupportsShouldProcess)]
+    SupportsShouldProcess,ConfirmImpact='High')]
   param(
     [Parameter(ParameterSetName='/data-protection/entities/enterprise-accounts/v1:delete',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
@@ -1473,7 +1473,7 @@ Cloud application identifier
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconDpeApplication
 #>
   [CmdletBinding(DefaultParameterSetName='/data-protection/entities/cloud-applications/v1:delete',
-    SupportsShouldProcess)]
+    SupportsShouldProcess,ConfirmImpact='High')]
   param(
     [Parameter(ParameterSetName='/data-protection/entities/cloud-applications/v1:delete',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
@@ -1510,7 +1510,7 @@ Classification identifier
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconDpeClassification
 #>
   [CmdletBinding(DefaultParameterSetName='/data-protection/entities/classifications/v2:delete',
-    SupportsShouldProcess)]
+    SupportsShouldProcess,ConfirmImpact='High')]
   param(
     [Parameter(ParameterSetName='/data-protection/entities/classifications/v2:delete',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
@@ -1546,7 +1546,8 @@ Sensitivity label identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconDpeLabel
 #>
-  [CmdletBinding(DefaultParameterSetName='/data-protection/entities/labels/v2:delete',SupportsShouldProcess)]
+  [CmdletBinding(DefaultParameterSetName='/data-protection/entities/labels/v2:delete',SupportsShouldProcess,
+    ConfirmImpact='High')]
   param(
     [Parameter(ParameterSetName='/data-protection/entities/labels/v2:delete',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
@@ -1583,7 +1584,7 @@ Web location identifier
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconDpeLocation
 #>
   [CmdletBinding(DefaultParameterSetName='/data-protection/entities/web-locations/v2:delete',
-    SupportsShouldProcess)]
+    SupportsShouldProcess,ConfirmImpact='High')]
   param(
     [Parameter(ParameterSetName='/data-protection/entities/web-locations/v2:delete',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
@@ -1620,7 +1621,7 @@ Content pattern identifier
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconDpePattern
 #>
   [CmdletBinding(DefaultParameterSetName='/data-protection/entities/content-patterns/v1:delete',
-    SupportsShouldProcess)]
+    SupportsShouldProcess,ConfirmImpact='High')]
   param(
     [Parameter(ParameterSetName='/data-protection/entities/content-patterns/v1:delete',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
@@ -1658,7 +1659,8 @@ Policy identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconDpePolicy
 #>
-  [CmdletBinding(DefaultParameterSetName='/data-protection/entities/policies/v2:delete',SupportsShouldProcess)]
+  [CmdletBinding(DefaultParameterSetName='/data-protection/entities/policies/v2:delete',SupportsShouldProcess,
+    ConfirmImpact='High')]
   param(
     [Parameter(ParameterSetName='/data-protection/entities/policies/v2:delete',Mandatory,
       ValueFromPipelineByPropertyName,Position=1)]

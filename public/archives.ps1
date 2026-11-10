@@ -161,7 +161,8 @@ Sample archive identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconSampleArchive
 #>
-  [CmdletBinding(DefaultParameterSetName='/archives/entities/archives/v1:delete',SupportsShouldProcess)]
+  [CmdletBinding(DefaultParameterSetName='/archives/entities/archives/v1:delete',SupportsShouldProcess,
+    ConfirmImpact='High')]
   param(
     [Parameter(ParameterSetName='/archives/entities/archives/v1:delete',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]

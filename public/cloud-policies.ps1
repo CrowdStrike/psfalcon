@@ -267,7 +267,8 @@ Compliance rule identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconCloudRule
 #>
-  [CmdletBinding(DefaultParameterSetName='/cloud-policies/entities/rules/v1:delete',SupportsShouldProcess)]
+  [CmdletBinding(DefaultParameterSetName='/cloud-policies/entities/rules/v1:delete',SupportsShouldProcess,
+    ConfirmImpact='High')]
   param(
     [Parameter(ParameterSetName='/cloud-policies/entities/rules/v1:delete',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
@@ -303,7 +304,7 @@ Compliance rule override identifier
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconCloudRuleOverride
 #>
   [CmdletBinding(DefaultParameterSetName='/cloud-policies/entities/rule-overrides/v1:delete',
-    SupportsShouldProcess)]
+    SupportsShouldProcess,ConfirmImpact='High')]
   param(
     [Parameter(ParameterSetName='/cloud-policies/entities/rule-overrides/v1:delete',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]

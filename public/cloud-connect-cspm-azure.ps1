@@ -384,7 +384,7 @@ Azure account identifier
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconCloudAzureAccount
 #>
   [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-azure/entities/account/v1:delete',
-    SupportsShouldProcess)]
+    SupportsShouldProcess,ConfirmImpact='High')]
   [Alias('Remove-FalconHorizonAzureAccount')]
   param(
     [Parameter(ParameterSetName='/cloud-connect-cspm-azure/entities/account/v1:delete',Position=1)]
@@ -428,7 +428,7 @@ Azure tenant identifier
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconCloudAzureGroup
 #>
   [CmdletBinding(DefaultParameterSetName='/cloud-connect-cspm-azure/entities/management-group/v1:delete',
-    SupportsShouldProcess)]
+    SupportsShouldProcess,ConfirmImpact='High')]
   param(
     [Parameter(ParameterSetName='/cloud-connect-cspm-azure/entities/management-group/v1:delete',
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]

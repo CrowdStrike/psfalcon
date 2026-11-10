@@ -244,7 +244,8 @@ Exclusion identifier
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconIoaExclusion
 #>
-  [CmdletBinding(DefaultParameterSetName='/policy/entities/ioa-exclusions/v1:delete',SupportsShouldProcess)]
+  [CmdletBinding(DefaultParameterSetName='/policy/entities/ioa-exclusions/v1:delete',SupportsShouldProcess,
+    ConfirmImpact='High')]
   param(
     [Parameter(ParameterSetName='/policy/entities/ioa-exclusions/v1:delete',Position=1)]
     [string]$Comment,

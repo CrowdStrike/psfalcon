@@ -291,7 +291,8 @@ Correlation 'rule_id' (all versions)
 .LINK
 https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconCorrelationRule
 #>
-  [CmdletBinding(DefaultParameterSetName='/correlation-rules/entities/rules/v1:delete',SupportsShouldProcess)]
+  [CmdletBinding(DefaultParameterSetName='/correlation-rules/entities/rules/v1:delete',SupportsShouldProcess,
+    ConfirmImpact='High')]
   param(
     [Parameter(ParameterSetName='/correlation-rules/entities/rule-versions/v1:delete',Mandatory,
       ValueFromPipelineByPropertyName,ValueFromPipeline,Position=1)]
