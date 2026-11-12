@@ -161,6 +161,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Export-FalconConfig
     } catch {
       throw "Failed to retrieve CID. Verify 'Sensor Download: Read' permission."
     }
+    Write-Warning "$($MyInvocation.MyCommand.Name) is no longer supported and will be removed in the next release."
   }
   process {
     if ($SourceCid) {
@@ -2338,6 +2339,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Import-FalconConfig
       (Get-Date -Format FileDateTime) -replace '\d{4}$',$null).csv"
     [regex]$PolicyDefault = '^(platform_default|Default Policy \((Linux|Mac|Windows)\))$'
     [string]$UaComment = ((Show-FalconModule).UserAgent,'Import-FalconConfig' -join ': ')
+    Write-Warning "$($MyInvocation.MyCommand.Name) is no longer supported and will be removed in the next release."
   }
   process {
     # Capture valid values for ModifyDefault and ModifyExisting

@@ -90,6 +90,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Export-FalconReport
     }
     if ($Path) { $Path = $Script:Falcon.Api.Path($Path) }
     [System.Collections.Generic.List[object]]$List = @()
+    Write-Warning "$($MyInvocation.MyCommand.Name) is no longer supported and will be removed in the next release."
   }
   process { if ($Object) { @($Object).foreach{ $List.Add($_) }}}
   end {
@@ -160,6 +161,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Send-FalconWebhook
       $Script:Falcon.Api.Client.DefaultRequestHeaders.Authorization
       [void]$Script:Falcon.Api.Client.DefaultRequestHeaders.Remove('Authorization')
     }
+    Write-Warning "$($MyInvocation.MyCommand.Name) is no longer supported and will be removed in the next release."
   }
   process {
     [object[]]$Content = switch ($PSBoundParameters.Type) {
@@ -237,6 +239,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Show-FalconMap
   begin {
     [string]$FalconUI = "$($Script:Falcon.Hostname -replace 'api','falcon')"
     $List = [System.Collections.Generic.List[string]]@()
+    Write-Warning "$($MyInvocation.MyCommand.Name) is no longer supported and will be removed in the next release."
   }
   process {
     if ($Indicator) {

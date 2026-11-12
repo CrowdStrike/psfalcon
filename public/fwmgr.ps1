@@ -102,6 +102,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Compare-FalconFirewallLocation
       # Output list of differing properties
       if ($pDiff) { $pDiff | Select-Object -Unique }
     }
+    Write-Warning "$($MyInvocation.MyCommand.Name) is no longer supported and will be removed in the next release."
   }
   process {
     # Define properties to compare, then check for modified properties

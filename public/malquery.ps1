@@ -307,6 +307,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Search-FalconMalQueryHash
     [ValidatePattern('^[A-Fa-f0-9]{64}$')]
     [string]$Sha256
   )
+  begin {
+    Write-Warning "$($MyInvocation.MyCommand.Name) is no longer supported and will be removed in the next release."
+  }
   process {
     try {
       $Param = @{

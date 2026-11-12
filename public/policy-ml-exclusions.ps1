@@ -35,6 +35,7 @@ https://github.com/crowdstrike/psfalcon/wiki/ConvertTo-FalconMlExclusion
       }
     }
     [System.Collections.Generic.List[PSCustomObject]]$Output = @()
+    Write-Warning "$($MyInvocation.MyCommand.Name) is no longer supported and will be removed in the next release."
   }
   process {
     if ($Detection.id) {

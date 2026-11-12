@@ -169,7 +169,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Add-FalconSensorTag
     [Alias('ids','device_id','host_ids','aid')]
     [string[]]$Id
   )
-  begin { [System.Collections.Generic.List[string]]$List = @() }
+  begin {
+    [System.Collections.Generic.List[string]]$List = @()
+    Write-Warning "$($MyInvocation.MyCommand.Name) is no longer supported and will be removed in the next release."
+  }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
@@ -200,7 +203,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Get-FalconSensorTag
     [Alias('ids','device_id','host_ids','aid')]
     [string[]]$Id
   )
-  begin { [System.Collections.Generic.List[string]]$List = @() }
+  begin {
+    [System.Collections.Generic.List[string]]$List = @()
+    Write-Warning "$($MyInvocation.MyCommand.Name) is no longer supported and will be removed in the next release."
+  }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
@@ -252,7 +258,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Remove-FalconSensorTag
     [Alias('ids','device_id','host_ids','aid')]
     [string[]]$Id
   )
-  begin { [System.Collections.Generic.List[string]]$List = @() }
+  begin {
+    [System.Collections.Generic.List[string]]$List = @()
+    Write-Warning "$($MyInvocation.MyCommand.Name) is no longer supported and will be removed in the next release."
+  }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
@@ -300,7 +309,10 @@ https://github.com/crowdstrike/psfalcon/wiki/Set-FalconSensorTag
     [Alias('ids','device_id','host_ids','aid')]
     [string[]]$Id
   )
-  begin { [System.Collections.Generic.List[string]]$List = @() }
+  begin {
+    [System.Collections.Generic.List[string]]$List = @()
+    Write-Warning "$($MyInvocation.MyCommand.Name) is no longer supported and will be removed in the next release."
+  }
   process { if ($Id) { @($Id).foreach{ $List.Add($_) }}}
   end {
     if ($List) {
@@ -345,6 +357,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Uninstall-FalconSensor
     [Alias('HostId','device_id','host_ids','aid')]
     [string]$Id
   )
+  begin {
+    Write-Warning "$($MyInvocation.MyCommand.Name) is no longer supported and will be removed in the next release."
+  }
   process {
     try {
       [string[]]$Select = 'cid','device_id','platform_name','device_policies'

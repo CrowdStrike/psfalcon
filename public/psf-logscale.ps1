@@ -27,6 +27,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Register-FalconEventCollector
     [ValidateSet('responses','requests')]
     [string[]]$Enable
   )
+  begin {
+    Write-Warning "$($MyInvocation.MyCommand.Name) is no longer supported and will be removed in the next release."
+  }
   process {
     if (!$Script:Falcon.Api) { throw "[ApiClient] has not been initiated. Try 'Request-FalconToken'." }
     $Script:Falcon.Api.Collector = @{ Uri = $PSBoundParameters.Uri.ToString(); Token = $PSBoundParameters.Token }
@@ -63,6 +66,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Send-FalconEvent
     $OriginalProgress = $ProgressPreference
     $ProgressPreference = 'SilentlyContinue'
     [System.Collections.Generic.List[PSCustomObject]]$List = @()
+    Write-Warning "$($MyInvocation.MyCommand.Name) is no longer supported and will be removed in the next release."
   }
   process {
     if ($Script:Falcon.Api.Collector.Token -and $Script:Falcon.Api.Collector.Token -match '^[a-fA-F0-9]{32}$') {
@@ -129,6 +133,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Show-FalconEventCollector
   [CmdletBinding()]
   [OutputType([PSCustomObject])]
   param()
+  begin {
+    Write-Warning "$($MyInvocation.MyCommand.Name) is no longer supported and will be removed in the next release."
+  }
   process { if ($Script:Falcon.Api.Collector) { [PSCustomObject]$Script:Falcon.Api.Collector }}
 }
 function Unregister-FalconEventCollector {
@@ -140,6 +147,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Unregister-FalconEventCollector
 #>
   [CmdletBinding()]
   param()
+  begin {
+    Write-Warning "$($MyInvocation.MyCommand.Name) is no longer supported and will be removed in the next release."
+  }
   process {
     if ($Script:Falcon.Api.Collector) {
       Write-Log 'Unregister-FalconEventCollector' "Removed '$($Script:Falcon.Api.Collector.Uri)'"

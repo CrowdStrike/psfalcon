@@ -52,6 +52,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Find-FalconDuplicate
     $FilterScript = [scriptblock]::Create((@($Criteria + 'last_seen').foreach{
       '![string]::IsNullOrEmpty($_.{0})' -f $_ } -join ' -and '))
     [System.Collections.Generic.List[PSCustomObject]]$List = @()
+    Write-Warning "$($MyInvocation.MyCommand.Name) is no longer supported and will be removed in the next release."
   }
   process {
     if ($InputObject) {
@@ -159,6 +160,7 @@ https://github.com/crowdstrike/psfalcon/wiki/Find-FalconHostname
     if ($Path) { [string]$Path = $Script:Falcon.Api.Path($Path) }
     [string[]]$Select = 'device_id','hostname'
     if ($Include) { $Select += $Include }
+    Write-Warning "$($MyInvocation.MyCommand.Name) is no longer supported and will be removed in the next release."
   }
   process {
     if ($Path) {

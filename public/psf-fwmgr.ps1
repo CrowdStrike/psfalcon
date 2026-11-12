@@ -240,6 +240,7 @@ https://github.com/crowdstrike/psfalcon/wiki/ConvertTo-FalconFirewallRule
       Join = '[;,]'
     }
     [System.Collections.Generic.List[object]]$List = @()
+    Write-Warning "$($MyInvocation.MyCommand.Name) is no longer supported and will be removed in the next release."
   }
   process {
     # Verify object properties against Map

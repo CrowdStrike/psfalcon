@@ -26,6 +26,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Copy-FalconDeviceControlPolicy
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [string]$Id
   )
+  begin {
+    Write-Warning "$($MyInvocation.MyCommand.Name) is no longer supported and will be removed in the next release."
+  }
   process {
     if ($PSCmdlet.ShouldProcess('Copy-FalconDeviceControlPolicy','Get-FalconDeviceControlPolicy')) {
       try {
@@ -83,6 +86,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Copy-FalconFirewallPolicy
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [string]$Id
   )
+  begin {
+    Write-Warning "$($MyInvocation.MyCommand.Name) is no longer supported and will be removed in the next release."
+  }
   process {
     if ($PSCmdlet.ShouldProcess('Copy-FalconFirewallPolicy','Get-FalconFirewallPolicy')) {
       try {
@@ -147,6 +153,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Copy-FalconPreventionPolicy
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [string]$Id
   )
+  begin {
+    Write-Warning "$($MyInvocation.MyCommand.Name) is no longer supported and will be removed in the next release."
+  }
   process {
     if ($PSCmdlet.ShouldProcess('Copy-FalconPreventionPolicy','Get-FalconPreventionPolicy')) {
       try {
@@ -204,6 +213,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Copy-FalconResponsePolicy
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [string]$Id
   )
+  begin {
+    Write-Warning "$($MyInvocation.MyCommand.Name) is no longer supported and will be removed in the next release."
+  }
   process {
     if ($PSCmdlet.ShouldProcess('Copy-FalconResponsePolicy','Get-FalconResponsePolicy')) {
       try {
@@ -261,6 +273,9 @@ https://github.com/crowdstrike/psfalcon/wiki/Copy-FalconSensorUpdatePolicy
     [ValidatePattern('^[a-fA-F0-9]{32}$')]
     [string]$Id
   )
+  begin {
+    Write-Warning "$($MyInvocation.MyCommand.Name) is no longer supported and will be removed in the next release."
+  }
   process {
     if ($PSCmdlet.ShouldProcess('Copy-FalconSensorUpdatePolicy','Get-FalconSensorUpdatePolicy')) {
       try {
